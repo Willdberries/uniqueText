@@ -1,35 +1,28 @@
 .App-container {
     width: 100vw;
-    /*height: 100vh;*/
-    overflow: hidden;
 }
 
 .App {
-    display: flex;
-}
-
-.description {
-    display: flex;
+    width: calc(100% - 40px);
+    display: grid;
+    grid-template-columns: 4fr 1fr 6fr 1fr;
+    gap: 8px;
     margin: 10px;
-    gap: 20px;
-
-.Button {
-    cursor: none;
-    }
+    justify-items: center;
 }
 
 .textarea {
-    width: 1110px;
+    width: 100%;
     padding: 10px;
-    height: 377px;
-    margin: 10px;
+    min-height: 377px;
+    height: auto;
     border-radius: 8px;
+    box-sizing: border-box;
 }
 
 .input {
     height: 30px;
     width: 500px;
-    margin: 10px;
     border-radius: 8px;
 }
 
@@ -37,11 +30,12 @@
     width: fit-content;
     border: none;
     height: 40px;
-    margin: 10px;
     border-radius: 8px;
     cursor: pointer;
     background-color: #a73afd;
     color: #ffffff;
+    position: sticky;
+    top: 10px;
 }
 
 .App-logo {
@@ -49,13 +43,16 @@
     pointer-events: none;
 }
 
-.textarea-text {
-    margin: 10px;
-    padding: 10px;
+.table {
+    border-collapse: collapse;
     border-radius: 8px;
-    border: 1px dashed black;
-    width: calc(100vw - 40px);
-    height: 200px;
+    width: 100%;
+}
+
+.td {
+    width: fit-content;
+    border: 1px solid black;
+    padding: 0 5px 0 5px;
 }
 
 @media (prefers-reduced-motion: no-preference) {

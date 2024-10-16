@@ -1,43 +1,40 @@
 import {useState} from 'react';
 import './App.css';
 
-const replacer = (text: string, world: string) => {
-    return text.replaceAll(world, "");
-}
-
-
 function App() {
     const [textareaText, setTextareaText] = useState<string>('')
-    const [world, setWorld] = useState<string>('')
     const [text, setText] = useState<string>('')
+    const [table, setTable] = useState<{ first: string, second: string }[]>([])
 
-const setWriteText = async (newText: string) => {
-    navigator.clipboard.writeText(newText)
-        .then(() => {
-            alert('Текст успешно скопирован в буфер обмена');
-        })
-}
-
-    const handleClick =  () => {
-        if (textareaText && world) {
-            const newText = replacer(textareaText, world)
-            setText(newText)
-            setWriteText(newText)
-        }
+    const setWriteText = async (newText: string) => {
+        navigator.clipboard.writeText(newText)
+            .then(() => {
+                alert('Таблица успешно скопирован в буфер обмена');
+            })
     }
 
-    const getUnickStr =  (currentText: string): string => {
-        const newTxt = currentText.replaceAll('\n', ' ').split(' ').reduce((acc: Record<string, string>, value: string) => {
-            if (acc[value]) {
+    const handleClick = () => {
+        text && setWriteText(text)
+    }
+
+    const getUnickStr = (currentText: string): string => {
+        let table: { first: string, second: string }[] = []
+        const filteredTable = currentText.split('\n').reduce((acc: Record<string, string>, value: string) => {
+            const a = value.split('\t')
+            if (a[0] in acc) {
                 return acc
             } else {
-                return {...acc, [value]: value}
+                table.push({first: a[0] + '\t', second: (a[1] || '') + '\n'})
+                return {...acc, [a[0]]: a[0] + '\t' + (a[1] || '') + '\n'}
             }
         }, {})
-        const newText = Object.values(newTxt).join(' ')
-        setText(newText)
-        setWriteText(newText)
-        return newText
+
+        const tableText = Object.values(filteredTable).join(' ')
+        setText(tableText)
+        setWriteText(tableText)
+        setTable(table)
+        table = []
+        return tableText
     }
 
     const handleClickUnick = () => {
@@ -49,49 +46,29 @@ const setWriteText = async (newText: string) => {
 
     return (
         <div className={'App-container'}>
-            <div className={'description'}>
-                <p>Кнопка</p>
-                <button className='Button'>
-                    Форматировать
-                </button>
-                <p>Убирает строки введеные в инпут</p>
-            </div>
-
-            <div className={'description'}>
-                <p>Кнопка</p>
-                <button className='Button'>
-                    Сделать уникальным
-                </button>
-                <p>Очищает дубликаты слов</p>
-            </div>
-
             <div className="App">
                    <textarea
                        className='textarea'
                        value={textareaText}
-                       onChange={(e) => setTextareaText(e.currentTarget.value)}
+                       onChange={(e) => setTextareaText(e.currentTarget.value.trim())}
                    />
-                <div>
-                    <input
-                        className='input'
-                        value={world}
-                        onChange={(e) => setWorld(e.currentTarget.value)}
-                    />
-                    <button className='Button' onClick={handleClick}>
-                        Форматировать
-                    </button>
-                    <button className='Button' onClick={handleClickUnick}>
-                        Сделать уникальным
-                    </button>
-                </div>
-
-            </div>
-            <div className={'text'}>
-                 <textarea
-                     disabled={true}
-                     className='textarea-text'
-                     value={text}
-                 />
+                <button className='Button' onClick={handleClickUnick}>
+                    Сделать уникальным
+                </button>
+                <table className={'table'}>
+                    {table.map((values, i) => {
+                        return (
+                            <tr key={`${values?.first}${values?.second}${i}`}>
+                                <td className={'td'}>{i + 1}</td>
+                                <td className={'td'}>{values?.first}</td>
+                                {values?.second && <td className={'td'}>{values?.second}</td>}
+                            </tr>
+                        )
+                    })}
+                </table>
+                {table.length && <button className='Button' onClick={handleClick}>
+                    Скопировать таблицу
+                </button>}
             </div>
         </div>
     );
